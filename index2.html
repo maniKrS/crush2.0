@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Starry Night</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: rgb(3, 7, 41);
+            position: relative;
+        }
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkling 2s infinite;
+            box-shadow: 0 0 1px 1px rgba(219, 87, 239, 0.8);
+        }
+        .bee {
+            position: absolute;
+            width: 13px;
+            height: 13px;
+            background-color: #f1b75a;
+            border-radius: 50%;
+            animation: twinkling 2s infinite;
+            box-shadow: 0 0 1px 1px rgba(209, 199, 7, 0.8);
+            transition: top 6s ease-in-out; 
+        }
+        .moon {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: #fff;
+            border-radius: 50%;
+            top: 20px;
+            left: 20px;
+            box-shadow: 0 0 10px 10px rgba(219, 87, 239, 0.8);
+            transition: top 5s ease-in-out;
+        }
+        .cloud {
+            position: absolute;
+            width: 100px;
+            height: 40px;
+            background-color: #fff;
+            border-radius: 20px;
+            top: 50px;
+            animation: drifting 30s linear infinite;
+            box-shadow: 0 0 1px 1px rgba(219, 87, 239, 0.8);
+        }
+        .message {
+            position: absolute;
+            color: #fff;
+            display: none;
+        }
+        .ground {
+            position: absolute;
+            width: 100%;
+            height: 500px;
+            top: 780px;
+            left: 0;
+            background-color: chartreuse;
+            z-index: 1;
+        }
+        .image {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            top: -190px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .clicktext {
+            position: absolute;
+            color: #fff;
+            display: block;
+            top: 720px;
+            left: 49%;
+            z-index: 2;
+            width: 80px;
+            height: 20px;
+            background-color: rgb(141, 158, 174);
+            border-radius: 10px;
+        }
+        .popup-container {
+            display: none;
+            position: absolute;
+            top: 500px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+            box-shadow: 0 0 3px 3px rgba(219, 87, 239, 0.8);
+        }
+        @keyframes twinkling {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        @keyframes drifting {
+            0% { left: -20%; }
+            100% { left: 120%; }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // Create a glowing moon
+        const moon = document.createElement('div');
+        moon.className = 'moon';
+        document.body.appendChild(moon);
+        const texts = ['you are my life', 'i love you', 'i can not live without you', 'tujhme rab dikhta hai'];
+        const ground = document.createElement('div');
+        ground.className = 'ground';
+        document.body.appendChild(ground);
+
+        const clicktext = document.createElement('div');
+        clicktext.className = 'clicktext';
+        clicktext.textContent = 'click at star';
+        document.body.appendChild(clicktext);
+        // Create stars at random positions
+        for (let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.top = Math.random() * 100 + 'vh';
+            star.style.left = Math.random() * 100 + 'vw';
+            document.body.appendChild(star);
+
+            // Add a click event to show a message and open the popup
+            star.addEventListener('click', () => {
+                const message = document.createElement('div');
+                message.className = 'message';
+                message.style.top = (parseFloat(star.style.top) + 10) + 'vh';
+                message.style.left = (parseFloat(star.style.left) + 10) + 'vw';
+                message.textContent = texts[Math.floor(Math.random() * texts.length)];
+                document.body.appendChild(message);
+
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                document.body.appendChild(heart);
+                // Display the message
+                message.style.display = 'block';
+
+                // Remove the message and heart after a few seconds
+                setTimeout(() => {
+                    document.body.removeChild(message);
+                    document.body.removeChild(heart);
+                }, 3000);
+
+                // Create a popup message box after a 10-second delay
+                setTimeout(() => {
+                    const popupContainer = document.createElement('div');
+                    popupContainer.className = 'popup-container';
+                    popupContainer.style.display = 'block'
+                    const popupMessage = document.createElement('div');
+                    popupMessage.className = 'popup-message';
+                    popupMessage.textContent = 'Enter your message: ';
+                    const input = document.createElement('input');
+                    input.placeholder = 'type yes or no'
+                    const submitButton = document.createElement('button');
+                    submitButton.textContent = 'Submit';
+                    submitButton.addEventListener('click', () => {
+                        alert('You entered: ' + input.value);
+                        document.body.removeChild(popupContainer);
+
+                        setTimeout(() => {
+                        if (input.value.toLowerCase() === 'no') {
+                            const allElements = document.body.querySelectorAll('.star, .message, .heart, .popup-container','.moon','.cloud','.image');
+                            allElements.forEach((element) => {
+                                document.body.removeChild(element);
+                            });
+                        }
+                    }, 2000);
+
+                    setTimeout(() => {
+                        if (input.value.toLowerCase() === 'no') {
+                            // Apply gravity to the moon
+                            moon.style.transition = 'top 5s ease-in-out';
+                            moon.style.top = '80vh';
+                        }
+                    }, 2000);
+
+                   // ... (Previous JavaScript code remains unchanged)
+                   setTimeout(() => {
+            if (input.value.toLowerCase() === 'yes') {
+                // Create and transition the bees
+                for (let i = 0; i < 100; i++) {
+                    const bee = document.createElement('div');
+                    bee.className = 'bee';
+                    bee.style.top = '900px'; // Start the bee at the bottom
+                    bee.style.left = Math.random() * 100 + 'vw'; // Randomize the horizontal position
+                    document.body.appendChild(bee);
+
+                    setTimeout(() => {
+                        bee.style.top = '0'; // Transition the bee to the top
+                    }, i * 1000); // Add a delay to stagger their movement
+                }
+            }
+        }, 2000);
+                   
+                    });
+                    popupMessage.appendChild(input);
+                    popupMessage.appendChild(submitButton);
+                    popupContainer.appendChild(popupMessage);
+                    document.body.appendChild(popupContainer);
+
+                    // Check if the input value is 'no' after 20 seconds
+                    
+                    
+
+                    
+                }, 10000);
+            });
+        }
+
+        // Create drifting clouds
+        for (let i = 0; i < 3; i++) {
+            const cloud = document.createElement('div');
+            cloud.className = 'cloud';
+            cloud.style.top = 30 + i * 50 + 'px';
+            cloud.style.animationDuration = 20 + i * 10 + 's';
+            document.body.appendChild(cloud);
+        }
+        const image = document.createElement('img');
+        image.className = 'image';
+        image.src = 'sprite_0.png'; // Replace 'image.png' with the path to your image
+        ground.appendChild(image);
+    </script>
+</body>
+</html>
